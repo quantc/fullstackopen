@@ -13,25 +13,27 @@ const App = () => {
   ]
 
   const [selected, setSelected] = useState(0)
-
-  const arr = new Array(anecdotes.length).fill(0)
-  // or  Uint8Array(anecdotes.length)
-  const [votes, setVotes] = useState(arr)
+  const [votes, setVotes] = useState(anecdotes.map((_) => 0))
   const [mostVotes, setMostVotes] = useState(0)
 
   const getAnecdote = () => {
-    const index = Math.floor(Math.random() * anecdotes.length)
-    setSelected(index)
+    while (true) {
+      const index = Math.floor(Math.random() * anecdotes.length)
+      if (index != selected) {
+        setSelected(index)
+        return
+      }
+    }
   }
 
   const vote = () => {
-    const copy = [...votes]
-    copy[selected] += 1
-    setVotes(copy)
+    const newVotes = [...votes]
+    newVotes[selected] += 1
+    setVotes(newVotes)
 
-    const mostVotes = Math.max(...copy)
-    const anecdoteIndex = copy.indexOf(mostVotes)
-    setMostVotes(anecdoteIndex)
+    if (newVotes[selected] > votes[mostVotes]) {
+      setMostVotes(selected)
+    }
   }
 
   return (
