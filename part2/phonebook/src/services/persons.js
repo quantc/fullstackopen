@@ -12,7 +12,12 @@ const create = (newObject) => {
   return promise.then((response) => response.data)
 }
 
+const deleteItem = (id) => {
+  return axios.delete(`${baseUrl}/${id}`).then((response) => response.data)
+}
+
 export default {
   getAll,
   create,
+  deleteItem,
 }

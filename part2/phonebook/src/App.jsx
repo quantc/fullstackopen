@@ -50,6 +50,16 @@ const App = () => {
     }
   }
 
+  const deleteItem = (id) => {
+    const personToDelete = persons.find((p) => p.id === id)
+
+    if (window.confirm(`Delete ${personToDelete.name}?`)) {
+      personsService.deleteItem(id).then(() => {
+        setPersons(persons.filter((p) => p.id !== id))
+      })
+    }
+  }
+
   const personsFiltered =
     filterBy.length > 0
       ? persons.filter((p) =>
@@ -70,7 +80,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Persons persons={personsFiltered} />
+      <Persons persons={personsFiltered} deleteItem={deleteItem} />
     </>
   )
 }
