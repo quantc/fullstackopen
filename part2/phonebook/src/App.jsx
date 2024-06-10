@@ -11,6 +11,7 @@ const App = () => {
   const [filterBy, setFilterBy] = useState("")
   const [persons, setPersons] = useState([])
   const [notification, setNotification] = useState(null)
+  const [isError, setIsError] = useState(false)
 
   const getAllPersons = () => {
     personsService.getAll("http://localhost:3001/persons").then((response) => {
@@ -48,16 +49,30 @@ const App = () => {
         )
       ) {
         const newPerson = { ...existingPerson, number: newNumber }
-        personsService.update(existingPerson.id, newPerson).then((response) => {
-          setPersons(
-            persons.map((p) => (p.id === existingPerson.id ? response : p))
-          )
+        personsService
+          .update(existingPerson.id, newPerson)
+          .then((response) => {
+            setPersons(
+              persons.map((p) => (p.id === existingPerson.id ? response : p))
+            )
 
-          setNotification(`Updated ${response.name}`)
-          setTimeout(() => {
-            setNotification(null)
-          }, 3000)
-        })
+            setNotification(`Updated ${response.name}`)
+            setTimeout(() => {
+              setNotification(null)
+            }, 3000)
+          })
+          .catch((error) => {
+            setNotification(
+              `Information of ${existingPerson.name} has already been removed from server`
+            )
+            setIsError(true)
+
+            setTimeout(() => {
+              setNotification(null)
+            }, 3000)
+
+            setPersons(persons.filter((p) => p.id !== existingPerson.id))
+          })
       }
     } else {
       personsService.create(newPerson).then((response) => {
@@ -91,7 +106,7 @@ const App = () => {
   return (
     <>
       <h2>Phonebook</h2>
-      <Notification message={notification} />
+      <Notification message={notification} isError={isError} />
       <SearchFilter onChange={handleFilterChange} />
 
       <h2>Add new person</h2>
