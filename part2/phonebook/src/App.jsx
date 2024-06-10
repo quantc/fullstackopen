@@ -1,18 +1,22 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import SearchFilter from "./components/SearchFilter"
 import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
+import personsService from "./services/persons"
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { id: "1", name: "Toby", number: "111" },
-    { id: "2", name: "Bob", number: "222" },
-    { id: "3", name: "Eliza", number: "333" },
-    { id: "4", name: "John", number: "444" },
-  ])
   const [newName, setNewName] = useState("")
   const [newNumber, setNewNumber] = useState("")
   const [filterBy, setFilterBy] = useState("")
+  const [persons, setPersons] = useState([])
+
+  const getAllPersons = () => {
+    personsService.getAll("http://localhost:3001/persons").then((response) => {
+      setPersons(response)
+    })
+  }
+
+  useEffect(getAllPersons, [])
 
   const handleNewPerson = (event) => {
     setNewName(event.target.value)
@@ -31,7 +35,6 @@ const App = () => {
     event.preventDefault()
 
     const newPerson = {
-      id: newName,
       name: newName,
       number: newNumber,
     }
@@ -40,7 +43,11 @@ const App = () => {
 
     if (personExists) {
       alert(`Person ${newPerson.name} already exists in phone book`)
-    } else setPersons(persons.concat(newPerson))
+    } else {
+      personsService.create(newPerson).then((response) => {
+        setPersons(persons.concat(response))
+      })
+    }
   }
 
   const personsFiltered =
@@ -62,7 +69,6 @@ const App = () => {
         handleNewNumber={handleNewNumber}
       />
 
-      {/* <Persons /> */}
       <h2>Numbers</h2>
       <Persons persons={personsFiltered} />
     </>
