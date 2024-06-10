@@ -3,12 +3,14 @@ import SearchFilter from "./components/SearchFilter"
 import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
 import personsService from "./services/persons"
+import Notification from "./components/Notification"
 
 const App = () => {
   const [newName, setNewName] = useState("")
   const [newNumber, setNewNumber] = useState("")
   const [filterBy, setFilterBy] = useState("")
   const [persons, setPersons] = useState([])
+  const [notification, setNotification] = useState(null)
 
   const getAllPersons = () => {
     personsService.getAll("http://localhost:3001/persons").then((response) => {
@@ -27,7 +29,6 @@ const App = () => {
   }
 
   const handleFilterChange = (event) => {
-    console.log("event", event.target.value)
     setFilterBy(event.target.value)
   }
 
@@ -51,11 +52,21 @@ const App = () => {
           setPersons(
             persons.map((p) => (p.id === existingPerson.id ? response : p))
           )
+
+          setNotification(`Updated ${response.name}`)
+          setTimeout(() => {
+            setNotification(null)
+          }, 3000)
         })
       }
     } else {
       personsService.create(newPerson).then((response) => {
         setPersons(persons.concat(response))
+
+        setNotification(`Added ${response.name}`)
+        setTimeout(() => {
+          setNotification(null)
+        }, 3000)
       })
     }
   }
@@ -80,6 +91,7 @@ const App = () => {
   return (
     <>
       <h2>Phonebook</h2>
+      <Notification message={notification} />
       <SearchFilter onChange={handleFilterChange} />
 
       <h2>Add new person</h2>
