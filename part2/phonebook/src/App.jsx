@@ -39,10 +39,20 @@ const App = () => {
       number: newNumber,
     }
 
-    const personExists = persons.some((p) => p.name === newName)
-
-    if (personExists) {
-      alert(`Person ${newPerson.name} already exists in phone book`)
+    const existingPerson = persons.find((p) => p.name === newName)
+    if (existingPerson !== undefined) {
+      if (
+        window.confirm(
+          `Person ${newPerson.name} already exists in phone book. Replace old number with a new one?`
+        )
+      ) {
+        const newPerson = { ...existingPerson, number: newNumber }
+        personsService.update(existingPerson.id, newPerson).then((response) => {
+          setPersons(
+            persons.map((p) => (p.id === existingPerson.id ? response : p))
+          )
+        })
+      }
     } else {
       personsService.create(newPerson).then((response) => {
         setPersons(persons.concat(response))

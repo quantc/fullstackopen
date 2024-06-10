@@ -16,8 +16,15 @@ const deleteItem = (id) => {
   return axios.delete(`${baseUrl}/${id}`).then((response) => response.data)
 }
 
+const update = (id, newObject) => {
+  return axios
+    .put(`${baseUrl}/${id}`, newObject)
+    .then((response) => response.data)
+}
+
 export default {
   getAll,
   create,
   deleteItem,
+  update,
 }
