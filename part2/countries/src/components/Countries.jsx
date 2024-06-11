@@ -1,4 +1,5 @@
 import { useState } from "react"
+import Weather from "./Weather"
 
 const Countries = ({ countriesList, filter }) => {
   const [countryToShow, setCountryToShow] = useState("")
@@ -43,23 +44,22 @@ const Countries = ({ countriesList, filter }) => {
 
 const CountryInfo = ({ country }) => {
   if (!country) return
-
-  const languages = Object.values(country.languages)
+  const languages = country.languages && Object.values(country.languages)
 
   return (
     <div>
       <div>
-        <h1>{country.name.common}</h1>
-        capital {country.capital} <br />
+        <h1>{country.name.official}</h1>
+        capital {country.capital ?? "None"} <br />
         area {country.area}
       </div>
       <br />
       <div>
         <b>languages:</b>
         <ul>
-          {languages.map((g) => (
-            <li key={g}>{g}</li>
-          ))}
+          {languages === undefined
+            ? "None"
+            : languages.map((g) => <li key={g}>{g}</li>)}
         </ul>
       </div>
       <img
@@ -67,6 +67,7 @@ const CountryInfo = ({ country }) => {
         alt={country.flags.alt}
         style={{ width: "30%", height: "auto", border: "1px solid black" }}
       />
+      <Weather city={country.capital ?? country.name.official} />
     </div>
   )
 }
