@@ -2,31 +2,29 @@ const express = require("express")
 const app = express()
 app.use(express.json())
 
-let entries = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-]
+let entries = require("./data.json")
 
 app.get("/api/persons", (request, response) => {
   response.json(entries)
+})
+
+app.get("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id)
+  const person = entries.find((e) => e.id === id)
+
+  if (person) {
+    response.json(person)
+  } else {
+    response.statusMessage = `Person of id=${id} doesn't exist.`
+    response.status(404).end()
+  }
+})
+
+app.delete("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id)
+  entries = entries.filter((e) => e.id !== id)
+
+  response.send(204).end()
 })
 
 app.get("/info", (request, response) => {
