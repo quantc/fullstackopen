@@ -28,13 +28,21 @@ app.delete("/api/persons/:id", (request, response) => {
 })
 
 app.post("/api/persons", (request, response) => {
-  let id = entries.length > 0 ? Math.random() * 10000 : 1
+  if (!request.body.name.trim()) {
+    response.status(400).send("Name cannot be empty.")
+  } else if (!request.body.number.trim()) {
+    response.status(400).send("Number cannot be empty.")
+  } else if (entries.find((e) => e.name === request.body.name)) {
+    response.status(500).send(`Name "${request.body.name}" already exists.`)
+  } else {
+    let id = entries.length > 0 ? Math.random() * 10000 : 1
 
-  const person = request.body
-  person.id = id.toFixed(0)
-  entries = entries.concat(person)
+    const person = request.body
+    person.id = Number(id.toFixed(0))
+    entries = entries.concat(person)
 
-  response.json(person)
+    response.json(person)
+  }
 })
 
 app.get("/info", (request, response) => {
