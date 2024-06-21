@@ -24,7 +24,17 @@ app.delete("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id)
   entries = entries.filter((e) => e.id !== id)
 
-  response.send(204).end()
+  response.sendStatus(204)
+})
+
+app.post("/api/persons", (request, response) => {
+  let id = entries.length > 0 ? Math.random() * 10000 : 1
+
+  const person = request.body
+  person.id = id.toFixed(0)
+  entries = entries.concat(person)
+
+  response.json(person)
 })
 
 app.get("/info", (request, response) => {
