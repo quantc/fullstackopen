@@ -5,7 +5,7 @@ import noteService from "./services/notes"
 import Footer from "./components/Footer"
 
 const App = () => {
-  const [notes, setNotes] = useState([])
+  const [notes, setNotes] = useState(null)
   const [newNote, setNewNote] = useState("a new note..")
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
@@ -15,9 +15,8 @@ const App = () => {
   useEffect(() => {
     noteService.getAll().then((initialData) => {
       setNotes(initialData)
-    }),
-      []
-  })
+    })
+  }, [])
 
   if (!notes) {
     return null

@@ -2,6 +2,14 @@ const express = require("express")
 const app = express()
 app.use(express.json())
 
+app.use(express.static("dist"))
+
+var corsOptions = {
+  origin: "http://localhost:5173",
+  optionSuccessStatus: 200,
+}
+const cors = require("cors")
+
 let notes = [
   {
     id: 1,
@@ -20,15 +28,15 @@ let notes = [
   },
 ]
 
-app.get("/", (request, response) => {
+app.get("/", cors(corsOptions), (request, response) => {
   response.send("<h1>Hello World!</h1>")
 })
 
-app.get("/api/notes", (request, response) => {
+app.get("/api/notes", cors(corsOptions), (request, response) => {
   response.json(notes)
 })
 
-app.get("/api/notes/:id", (request, response) => {
+app.get("/api/notes/:id", cors(corsOptions), (request, response) => {
   const id = Number(request.params.id)
   const note = notes.find((note) => note.id === id)
 
@@ -39,13 +47,13 @@ app.get("/api/notes/:id", (request, response) => {
     response.status(404).end()
   }
 })
-app.delete("/api/notes/:id", (request, response) => {
+app.delete("/api/notes/:id", cors(corsOptions), (request, response) => {
   const id = Number(request.params.id)
   notes = notes.filter((note) => note.id !== id)
 
   response.status(204).end()
 })
-app.post("/api/notes", (request, response) => {
+app.post("/api/notes", cors(corsOptions), (request, response) => {
   const maxId = notes.length > 0 ? Math.max(...notes.map((n) => n.id)) : 0
   console.log("max id = ", maxId)
 
@@ -59,7 +67,7 @@ app.post("/api/notes", (request, response) => {
   response.json(note)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
   console.log("-------------------")
