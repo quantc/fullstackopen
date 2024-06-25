@@ -1,0 +1,16 @@
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+    "content": "Using Rest Extension in VS Code",
+    "important": true
+}
+
+###
+PUT  http://localhost:3001/api/notes
+Content-Type: application/json
+
+{ 
+    "content": "no side effects!", 
+    "important": true 
+}
