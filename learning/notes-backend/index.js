@@ -5,10 +5,11 @@ app.use(express.json())
 app.use(express.static("dist"))
 
 var corsOptions = {
-  origin: "http://localhost:5173",
-  optionSuccessStatus: 200,
+  // origin: "http://localhost:5173",
+  // optionSuccessStatus: 200,
 }
 const cors = require("cors")
+app.use(cors())
 
 let notes = [
   {
@@ -27,6 +28,15 @@ let notes = [
     important: true,
   },
 ]
+
+const requestLogger = (request, response, next) => {
+  console.log("Method:", request.method)
+  console.log("Path:  ", request.path)
+  console.log("Body:  ", request.body)
+  console.log("---")
+  next()
+}
+app.use(requestLogger)
 
 app.get("/", cors(corsOptions), (request, response) => {
   response.send("<h1>Hello World!</h1>")
@@ -55,10 +65,6 @@ app.delete("/api/notes/:id", cors(corsOptions), (request, response) => {
 })
 app.post("/api/notes", cors(corsOptions), (request, response) => {
   const maxId = notes.length > 0 ? Math.max(...notes.map((n) => n.id)) : 0
-  console.log("max id = ", maxId)
-
-  console.log(notes.map((n) => n.id))
-  console.log(...notes.map((n) => n.id))
 
   const note = request.body
   note.id = maxId + 1
